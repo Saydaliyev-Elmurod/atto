@@ -1,6 +1,11 @@
 package main.java.dto;
 
+import enums.Role;
+import enums.Status;
 import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -9,10 +14,14 @@ import lombok.*;
 @AllArgsConstructor
 
 public class Profile {
-    String name ;
-    String surname;
-    String phone ;
-    String password;
+    private Integer id;
+    private String name;
+    private String surname;
+    private String phone;
+    private String password;
+    private LocalDateTime localDateTime;
+    private Status status;
+    private Role role;
 
 
 }

@@ -2,6 +2,7 @@ package controller;
 
 import container.ComponentContainer;
 import db.DataBase;
+import enums.Role;
 import main.java.dto.Profile;
 
 import java.util.InputMismatchException;
@@ -9,17 +10,17 @@ import java.util.InputMismatchException;
 public class MainController {
     public void start() {
         DataBase.init();
-        while (true){
+        while (true) {
             menu();
-            int action = getAction();
-            switch (action){
-                case 1->{
-                        login();
+            int action = ComponentContainer.getAction();
+            switch (action) {
+                case 1 -> {
+                    login();
                 }
-                case 2->{
+                case 2 -> {
                     registration();
                 }
-                case 0->{
+                case 0 -> {
                     System.exit(0);
                 }
             }
@@ -36,7 +37,11 @@ public class MainController {
         String phone = ComponentContainer.stringScanner.next();
         System.out.print("Enter password >> ");
         String password = ComponentContainer.stringScanner.next();
-        Profile profile = new Profile(name,surname,phone,password);
+        Profile profile = new Profile();
+        profile.setPassword(password);
+        profile.setName(name);
+        profile.setSurname(surname);
+        profile.setPhone(phone);
         ComponentContainer.profileService.registration(profile);
 
     }
@@ -46,21 +51,19 @@ public class MainController {
         String phone = ComponentContainer.stringScanner.next();
         System.out.print("Enter password :");
         String password = ComponentContainer.stringScanner.next();
-
-
-
-    }
-
-    private int getAction() {
-        System.out.print("Action >> ");
-        /*agar menuda raqam tanlamasdan harf yoki belgi tanlasa exception tashlaydi*/
-        try {
-            return ComponentContainer.intScanner.nextInt();
-        }catch (InputMismatchException e){
-            System.out.println("Error");
+        Profile profile = ComponentContainer.profileService.login(phone, password);
+        if (profile == null) {
+            System.out.println("password or login incorrect");
+            return;
         }
-        return 0;
+        if (profile.getRole().equals(Role.USER)) {
+            ComponentContainer.profileController.start(profile);
+        } else if (profile.getRole().equals(Role.ADMIN)) {
+            ComponentContainer.adminController.start(profile);
+        }
     }
+
+
     private void menu() {
         System.out.println("1.Login");
         System.out.println("2.Registration");
